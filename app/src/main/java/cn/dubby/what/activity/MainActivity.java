@@ -41,6 +41,8 @@ import java.util.List;
 import cn.dubby.what.R;
 import cn.dubby.what.application.MyApplication;
 import cn.dubby.what.component.CircleNetworkImageView;
+import cn.dubby.what.component.DividerGridItemDecoration;
+import cn.dubby.what.component.DividerItemDecoration;
 import cn.dubby.what.component.MainContentRecyclerAdapter;
 import cn.dubby.what.constant.SharedConstant;
 import cn.dubby.what.constant.URLConstant;
@@ -139,7 +141,9 @@ public class MainActivity extends AppCompatActivity
         gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(gridLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-
+        //设置分割线
+//        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
+        recyclerView.addItemDecoration(new DividerGridItemDecoration(this));
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refreshLayout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -150,14 +154,16 @@ public class MainActivity extends AppCompatActivity
                     protected Integer doInBackground(Void... params) {
                         int position = data.size();
                         try {
-                            Thread.sleep(1000 * 3);
+                            Thread.sleep(1000 * 2);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        for (int i = 0; i < 5; ++i) {
+                        for (int i = 0; i < 1; ++i) {
                             Circle circle = new Circle();
                             circle.logo = "https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=2102217541,3129842170&fm=58";
-                            circle.description = "Java是一个纯粹的面向对象的程序设计语言，它继承了 C++语言面向对象技术的核心。Java舍弃了C语言中容易引起错误的指针（以引用取代）、运算符重载（operator overloading）、多重继承（以接口取代）等特性，增加了垃圾回收器功能用于回收不再被引用的对象所占据的内存空间，使得程序员不用再为内存管理而担忧。在 Java 1.5 版本中，Java 又引入了泛型编程（Generic Programming）、类型安全的枚举、不定长参数和自动装/拆箱等语言特性。";
+
+                            String location = (String) SharedPreferencesUtils.getParam(MyApplication.context, SharedConstant.LOCATION, "暂时无法获得位置信息");
+                            circle.description = location;
                             data.add(circle);
                         }
                         return position;
@@ -214,6 +220,13 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
+
+        switch (id) {
+            case R.id.exit:
+                finish();
+                System.exit(0);
+                break;
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

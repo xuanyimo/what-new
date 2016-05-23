@@ -16,8 +16,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import cn.dubby.what.constant.SharedConstant;
 import cn.dubby.what.utils.MessagesContainer;
 import cn.dubby.what.utils.SharedPreferencesUtils;
+import cn.dubby.what.utils.StringUtils;
 
 
 public class LocationService extends Service implements AMapLocationListener {
@@ -82,8 +84,11 @@ public class LocationService extends Service implements AMapLocationListener {
 
                 MessagesContainer.LOCATION = parameters.toString();
                 Log.i("location", parameters.toString());
-                SharedPreferencesUtils.setParam(getApplicationContext(), "location", parameters.toString());
-//                stopSelf();
+                if (!StringUtils.isEmpty(province) && !StringUtils.isEmpty(city) && !StringUtils.isEmpty(district) &&
+                        !StringUtils.isEmpty(street)) {
+                    SharedPreferencesUtils.setParam(getApplicationContext(), SharedConstant.LOCATION, parameters.toString());
+                    stopSelf();
+                }
             } else {
                 //显示错误信息ErrCode是错误码，errInfo是错误信息，详见错误码表。
                 Log.e("LocationService", "location Error, ErrCode:"

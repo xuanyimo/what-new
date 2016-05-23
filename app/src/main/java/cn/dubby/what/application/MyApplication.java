@@ -31,7 +31,7 @@ public class MyApplication extends Application {
         imageLoader = new ImageLoader(requestQueue, new LruBitmapCache());
 
         //定位服务没有开启
-//        startLocationService();
+        startLocationService();
 
         // 异常处理，不需要处理时注释掉这两句即可！
         CrashHandler crashHandler = CrashHandler.getInstance();
