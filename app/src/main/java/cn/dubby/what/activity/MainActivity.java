@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -25,6 +26,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.animation.TranslateAnimation;
 import android.widget.TextView;
 
 import com.android.volley.Response;
@@ -110,6 +112,8 @@ public class MainActivity extends AppCompatActivity
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setBackgroundColor(Color.BLUE);
+//        fab.setRippleColor();
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
@@ -125,6 +129,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(MainActivity.this, PostThemeActivity.class));
+                overridePendingTransition(R.animator.zoomin, R.animator.zoomout);
+
             }
         });
 
@@ -165,6 +171,7 @@ public class MainActivity extends AppCompatActivity
                 }.execute(null, null, null);
             }
         });
+        swipeRefreshLayout.setColorSchemeColors(Color.GREEN);
     }
 
     private void checkLoginStatus() {

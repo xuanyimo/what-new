@@ -179,4 +179,10 @@ public class PostThemeActivity extends AppCompatActivity implements View.OnClick
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+        overridePendingTransition(R.animator.zoomin, R.animator.zoomout);
+    }
 }
