@@ -3,33 +3,30 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Import" />
+            android:id="@+id/find_circle"
+            android:icon="@android:drawable/ic_search_category_default"
+            android:title="发现圈子" />
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
+            android:id="@+id/collection"
+            android:icon="@android:drawable/ic_input_get"
+            android:title="我的收藏" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:id="@+id/recommend"
+            android:icon="@android:drawable/star_big_on"
+            android:title="热门推荐" />
+
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="其他">
         <menu>
             <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+                android:id="@+id/setting"
+                android:icon="@android:drawable/ic_menu_manage"
+                android:title="系统设置" />
             <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:id="@+id/user_info"
+                android:icon="@android:drawable/ic_menu_info_details"
+                android:title="我的信息" />
         </menu>
     </item>
 

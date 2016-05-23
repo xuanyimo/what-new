@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="6dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <cn.dubby.what.component.CircleNetworkImageView
+            android:id="@+id/userImage"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:padding="5dp" />
+
+        <TextView
+            android:id="@+id/userName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="dubby" />
+
+        <TextView
+            android:id="@+id/createTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:text="2011-1-1 10:22" />
+
+        <TextView
+            android:id="@+id/location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:text="山东科技大学" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="“斗铠师，依旧是魂师。机甲是给人穿戴的武器，而斗铠，却是给你们武魂穿戴的武器。这二者之前，是有质的区别的。所以，我们始终都会强调一点，一字斗铠师，其实只是斗铠师的雏形，只有当你达到二字斗铠师，可以用两个字来命名你的斗铠，让它和你的生命溶为一体，真正成为你身体的一部分、武魂的一部分时，你才是真正的斗铠师。”" />
+</LinearLayout>
