@@ -213,7 +213,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                         JSONObject userJson = new JSONObject(jsonObject.getString("user"));
                                         User user = new User(userJson);
 
+                                        SharedPreferencesUtils.setParam(getApplicationContext(), SharedConstant.USER_ID, user.serverId);
+                                        SharedPreferencesUtils.setParam(getApplicationContext(), SharedConstant.EMAIL, user.email);
+                                        SharedPreferencesUtils.setParam(getApplicationContext(), SharedConstant.USER_PICTURE, user.headImg);
                                         MessagesContainer.CURRENT_USER = user;
+
                                     }
                                 } catch (JSONException e) {
                                     e.printStackTrace();

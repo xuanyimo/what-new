@@ -13,4 +13,6 @@ public class SharedConstant {
     public static final String ORIENTATION = "orientation";
 
     public static final String LOCATION = "location";
+
+    public static final String USER = "user";
 }

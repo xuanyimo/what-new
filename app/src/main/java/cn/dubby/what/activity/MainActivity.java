@@ -53,6 +53,7 @@ import cn.dubby.what.component.MainContentRecyclerAdapter;
 import cn.dubby.what.constant.SharedConstant;
 import cn.dubby.what.constant.URLConstant;
 import cn.dubby.what.domain.circle.Circle;
+import cn.dubby.what.domain.user.User;
 import cn.dubby.what.dto.FormImage;
 import cn.dubby.what.dto.Result;
 import cn.dubby.what.utils.MessagesContainer;
@@ -69,7 +70,6 @@ public class MainActivity extends AppCompatActivity
     private CircleNetworkImageView imageView;
     private TextView loginNameTv;
     private NavigationView navigationView;
-    private FloatingActionButton fab;
     private Toolbar toolbar;
     private DrawerLayout drawer;
     private ActionBarDrawerToggle toggle;
@@ -98,6 +98,8 @@ public class MainActivity extends AppCompatActivity
     private void reload() {
         if (StringUtils.isEmpty(MessagesContainer.TOKEN))
             return;
+        loginNameTv.setText(MessagesContainer.CURRENT_USER.email);
+        imageView.setImageUrl(MessagesContainer.CURRENT_USER.headImg, MyApplication.getImageLoader());
         Log.i("token", MessagesContainer.TOKEN);
         Map map = new HashMap();
         map.put("token", MessagesContainer.TOKEN + "");
@@ -133,9 +135,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void loadData() {
-        loginNameTv.setText(MessagesContainer.getEmail());
-        imageView.setImageUrl(MessagesContainer.getUserImage(), MyApplication.getImageLoader());
-
         reload();
     }
 
@@ -144,9 +143,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setBackgroundColor(Color.BLUE);
-//        fab.setRippleColor();
+
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
@@ -158,14 +155,7 @@ public class MainActivity extends AppCompatActivity
 
         //绑定监听
         imageView.setOnClickListener(this);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, PostThemeActivity.class));
-                overridePendingTransition(R.animator.zoomin, R.animator.zoomout);
 
-            }
-        });
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 1);
@@ -207,6 +197,16 @@ public class MainActivity extends AppCompatActivity
                 startActivity(new Intent(this, LoginActivity.class));
             } else {
                 MessagesContainer.TOKEN = token;
+                long id = (long) SharedPreferencesUtils.getParam(getApplicationContext(), SharedConstant.USER_ID, 0L);
+                String email = (String) SharedPreferencesUtils.getParam(getApplicationContext(), SharedConstant.EMAIL, "");
+                String image = (String) SharedPreferencesUtils.getParam(getApplicationContext(), SharedConstant.USER_PICTURE, "");
+                if (id != 0 && !StringUtils.isEmpty(email)) {
+                    User user = new User();
+                    user.serverId = id;
+                    user.email = email;
+                    user.headImg = image;
+                    MessagesContainer.CURRENT_USER = user;
+                }
             }
         }
     }

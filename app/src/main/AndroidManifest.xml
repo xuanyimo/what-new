@@ -75,7 +75,8 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.ThemeListActivity"
-            android:label="话题区" />
+            android:label="话题区"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.CommentActivity"
             android:label="评论区"

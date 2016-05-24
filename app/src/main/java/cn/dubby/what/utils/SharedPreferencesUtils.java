@@ -22,12 +22,11 @@ public class SharedPreferencesUtils {
 
     /**
      * 保存数据的方法，我们需要拿到保存数据的具体类型，然后根据类型调用不同的保存方法
-     *
-     * @param context
+     *  @param context
      * @param key
      * @param object
      */
-    public static void setParam(Context context, String key, Object object) {
+    public static String setParam(Context context, String key, Object object) {
 
         String type = object.getClass().getSimpleName();
         SharedPreferences sp = context.getSharedPreferences(FILE_NAME,
@@ -47,6 +46,7 @@ public class SharedPreferencesUtils {
         }
 
         editor.commit();
+        return type;
     }
 
     /**

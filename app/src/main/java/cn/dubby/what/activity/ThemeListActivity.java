@@ -1,8 +1,11 @@
 package cn.dubby.what.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -22,10 +25,13 @@ import cn.dubby.what.R;
 import cn.dubby.what.application.MyApplication;
 import cn.dubby.what.component.AdapterWithNetwork;
 import cn.dubby.what.component.FreshListView;
+import cn.dubby.what.component.dialog.CustomDialog;
 import cn.dubby.what.constant.URLConstant;
 import cn.dubby.what.domain.circle.Theme;
 import cn.dubby.what.dto.Result;
 import cn.dubby.what.utils.MessagesContainer;
+import cn.dubby.what.utils.StringUtils;
+import cn.dubby.what.utils.ToastUtils;
 import cn.dubby.what.volleyx.MyRequest;
 
 public class ThemeListActivity extends AppCompatActivity {
@@ -33,6 +39,8 @@ public class ThemeListActivity extends AppCompatActivity {
     private FreshListView freshListView;
     private LinkedList<Map<String, Object>> data = new LinkedList<>();
     private AdapterWithNetwork adapter;
+    private Toolbar toolbar;
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +103,8 @@ public class ThemeListActivity extends AppCompatActivity {
 
     private void initView() {
         setContentView(R.layout.activity_theme_list);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         freshListView = (FreshListView) findViewById(R.id.freshListView);
         adapter = new AdapterWithNetwork(this, data, R.layout.component_theme_list_item,
                 new String[]{"image", "user_name", "content", "time", "location"},
@@ -113,6 +123,14 @@ public class ThemeListActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 MessagesContainer.CURRENT_THEME_ID = (long) data.get(position - 1).get("id");
                 startActivity(new Intent(ThemeListActivity.this, CommentActivity.class));
+                overridePendingTransition(R.animator.zoomin, R.animator.zoomout);
+            }
+        });
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ThemeListActivity.this, PostThemeActivity.class));
                 overridePendingTransition(R.animator.zoomin, R.animator.zoomout);
             }
         });
