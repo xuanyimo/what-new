@@ -204,20 +204,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                     JSONObject jsonObject = (JSONObject) response.getData();
 
                                     if (jsonObject.has("token")) {
+                                        Log.i("token", jsonObject.getString("token"));
                                         MessagesContainer.TOKEN = jsonObject.getString("token");
                                         SharedPreferencesUtils.setParam(getApplicationContext(), "token", MessagesContainer.TOKEN);
                                     }
 
                                     if (jsonObject.has("user")) {
                                         JSONObject userJson = new JSONObject(jsonObject.getString("user"));
-                                        if (userJson.has("email")) {
-                                            MessagesContainer.CURRENT_USER.email = userJson.getString("email");
-                                            SharedPreferencesUtils.setParam(MyApplication.context, SharedConstant.EMAIL, MessagesContainer.CURRENT_USER.email);
-                                        }
-                                        if (userJson.has("id")) {
-                                            MessagesContainer.CURRENT_USER.serverId = userJson.getLong("id");
-                                            SharedPreferencesUtils.setParam(MyApplication.context, SharedConstant.USER_ID, MessagesContainer.CURRENT_USER.serverId);
-                                        }
+                                        User user = new User(userJson);
+
+                                        MessagesContainer.CURRENT_USER = user;
                                     }
                                 } catch (JSONException e) {
                                     e.printStackTrace();

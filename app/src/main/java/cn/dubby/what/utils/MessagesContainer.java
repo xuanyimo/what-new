@@ -12,11 +12,20 @@ public class MessagesContainer {
 
     public static long CURRENT_CIRCLE_ID;
 
+    public static String CURRENT_USER_IMAGE;
+
     public static User CURRENT_USER;
 
     public static String TOKEN;
 
     public static String LOCATION;
+
+    public static String getUserImage() {
+        if (!StringUtils.isEmpty(CURRENT_USER_IMAGE))
+            return CURRENT_USER_IMAGE;
+        CURRENT_USER_IMAGE = (String) SharedPreferencesUtils.getParam(MyApplication.context, SharedConstant.USER_PICTURE, "https://ss0.bdstatic.com/94oJfD_bAAcT8t7mm9GUKT-xh_/timg?image&quality=100&size=b4000_4000&sec=1464019385&di=91f148fe63af2efecabdc2c8ea1ca811&src=http://p7.qhimg.com/t01cd54e217033aab22.jpg");
+        return CURRENT_USER_IMAGE;
+    }
 
     public static String getEmail() {
         if (CURRENT_USER != null && !StringUtils.isEmpty(CURRENT_USER.email))

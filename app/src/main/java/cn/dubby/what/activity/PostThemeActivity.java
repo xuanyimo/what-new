@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 
@@ -45,6 +46,8 @@ public class PostThemeActivity extends AppCompatActivity implements View.OnClick
 
     private int circleIndex = 0;
 
+    private CheckBox sendLocationCheckBox;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +75,8 @@ public class PostThemeActivity extends AppCompatActivity implements View.OnClick
 
         //提交按钮
         findViewById(R.id.postBtn).setOnClickListener(this);
+
+        sendLocationCheckBox = (CheckBox) findViewById(R.id.sendLocationCheckBox);
     }
 
     private void initData() {
@@ -141,7 +146,8 @@ public class PostThemeActivity extends AppCompatActivity implements View.OnClick
         map.put("content", content);
         map.put("cid", circleIdList.get(circleIndex) + "");
         String location = SharedPreferencesUtils.getParam(getApplicationContext(), "location", "").toString();
-        map.put("location", location);
+        if (sendLocationCheckBox.isChecked())
+            map.put("location", location);
 
         Log.i("post", map.toString());
         MyRequest request = new MyRequest(URLConstant.THEME.ADD, map,

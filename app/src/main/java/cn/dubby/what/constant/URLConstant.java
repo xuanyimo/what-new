@@ -18,9 +18,14 @@ public class URLConstant {
     //Theme相关
     public static class THEME {
         //根据circleId查出最新的20条Theme
-        public static String FOCUS_LIST = BASE + "theme/list.do";
+        public static String LIST = BASE + "theme/list.do";
         public static String ADD = BASE + "theme/add.do";
         public static String RECOMMEND_LIST = BASE + "theme/recommend.do";
+    }
+
+    public static class COMMENT {
+        public static String LIST = BASE + "post/list.do";
+        public static String ADD = BASE + "post/comment.do";
     }
 
 

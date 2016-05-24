@@ -34,9 +34,15 @@ import com.android.volley.VolleyError;
 import com.google.zxing.client.android.Intents;
 import com.google.zxing.integration.android.IntentIntegrator;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import cn.dubby.what.R;
 import cn.dubby.what.application.MyApplication;
@@ -48,10 +54,12 @@ import cn.dubby.what.constant.SharedConstant;
 import cn.dubby.what.constant.URLConstant;
 import cn.dubby.what.domain.circle.Circle;
 import cn.dubby.what.dto.FormImage;
+import cn.dubby.what.dto.Result;
 import cn.dubby.what.utils.MessagesContainer;
 import cn.dubby.what.utils.SharedPreferencesUtils;
 import cn.dubby.what.utils.StringUtils;
 import cn.dubby.what.utils.ToastUtils;
+import cn.dubby.what.volleyx.MyRequest;
 import cn.dubby.what.volleyx.PostUploadRequest;
 
 public class MainActivity extends AppCompatActivity
@@ -78,34 +86,57 @@ public class MainActivity extends AppCompatActivity
         //准备界面
         super.onCreate(savedInstanceState);
 
+        //检查是否已登录
+        checkLoginStatus();
 
         initView();
         loadData();
 
-        //检查是否已登录
-        checkLoginStatus();
+
+    }
+
+    private void reload() {
+        if (StringUtils.isEmpty(MessagesContainer.TOKEN))
+            return;
+        Log.i("token", MessagesContainer.TOKEN);
+        Map map = new HashMap();
+        map.put("token", MessagesContainer.TOKEN + "");
+
+        MyRequest request = new MyRequest(URLConstant.CIRCLE.MY_LIST, map, new Response.Listener<Result>() {
+            @Override
+            public void onResponse(Result response) {
+                if (response.getErrorCode() == 0) {
+                    data.clear();
+                    JSONArray jsonArray = (JSONArray) response.getData();
+                    for (int i = 0; i < jsonArray.length(); ++i) {
+                        try {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            Circle circle = new Circle(jsonObject);
+
+                            data.add(circle);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    adapter.notifyDataSetChanged();
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+
+        MyApplication.addToRequestQueue(request);
     }
 
     private void loadData() {
         loginNameTv.setText(MessagesContainer.getEmail());
-        imageView.setImageUrl("https://ss0.bdstatic.com/94oJfD_bAAcT8t7mm9GUKT-xh_/timg?image&quality=100&size=b4000_4000&sec=1464019385&di=91f148fe63af2efecabdc2c8ea1ca811&src=http://p7.qhimg.com/t01cd54e217033aab22.jpg", MyApplication.getImageLoader());
+        imageView.setImageUrl(MessagesContainer.getUserImage(), MyApplication.getImageLoader());
 
-        data = new ArrayList<>();
-        for (int i = 0; i < 5; ++i) {
-            Circle circle = new Circle();
-            circle.logo = "https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=2102217541,3129842170&fm=58";
-            circle.description = "Java是一个纯粹的面向对象的程序设计语言，它继承了 C++语言面向对象技术的核心。Java舍弃了C语言中容易引起错误的指针（以引用取代）、运算符重载（operator overloading）、多重继承（以接口取代）等特性，增加了垃圾回收器功能用于回收不再被引用的对象所占据的内存空间，使得程序员不用再为内存管理而担忧。在 Java 1.5 版本中，Java 又引入了泛型编程（Generic Programming）、类型安全的枚举、不定长参数和自动装/拆箱等语言特性。";
-            data.add(circle);
-        }
-        adapter = new MainContentRecyclerAdapter(this, data);
-        adapter.setOnItemClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TextView tv = (TextView) v.findViewById(R.id.description);
-                ToastUtils.showShort(MainActivity.this, tv.getText());
-            }
-        });
-        recyclerView.setAdapter(adapter);
+        reload();
     }
 
     private void initView() {
@@ -137,7 +168,7 @@ public class MainActivity extends AppCompatActivity
         });
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 1);
         gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(gridLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -148,36 +179,24 @@ public class MainActivity extends AppCompatActivity
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                ToastUtils.showShort(MainActivity.this, "refresh...");
-                new AsyncTask<Void, Void, Integer>() {
-                    @Override
-                    protected Integer doInBackground(Void... params) {
-                        int position = data.size();
-                        try {
-                            Thread.sleep(1000 * 2);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        for (int i = 0; i < 1; ++i) {
-                            Circle circle = new Circle();
-                            circle.logo = "https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=2102217541,3129842170&fm=58";
-
-                            String location = (String) SharedPreferencesUtils.getParam(MyApplication.context, SharedConstant.LOCATION, "暂时无法获得位置信息");
-                            circle.description = location;
-                            data.add(circle);
-                        }
-                        return position;
-                    }
-
-                    @Override
-                    protected void onPostExecute(Integer position) {
-                        adapter.notifyItemInserted(position);
-                        swipeRefreshLayout.setRefreshing(false);
-                    }
-                }.execute(null, null, null);
+                reload();
             }
         });
         swipeRefreshLayout.setColorSchemeColors(Color.GREEN);
+
+        data = new ArrayList<>();
+        adapter = new MainContentRecyclerAdapter(this, data);
+        adapter.setOnItemClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TextView idTv = (TextView) ((View) (v.getParent())).findViewById(R.id.idTv);
+
+                MessagesContainer.CURRENT_CIRCLE_ID = Long.parseLong(idTv.getText().toString());
+                startActivity(new Intent(MainActivity.this, ThemeListActivity.class));
+                overridePendingTransition(R.animator.zoomin, R.animator.zoomout);
+            }
+        });
+        recyclerView.setAdapter(adapter);
     }
 
     private void checkLoginStatus() {
@@ -222,6 +241,18 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         switch (id) {
+            case R.id.find_circle:
+                startActivity(new Intent(this, FindCircleActivity.class));
+                overridePendingTransition(R.animator.zoomin, R.animator.zoomout);
+                break;
+            case R.id.collection:
+                startActivity(new Intent(this, MyCollectionActivity.class));
+                overridePendingTransition(R.animator.zoomin, R.animator.zoomout);
+                break;
+            case R.id.recommend:
+                startActivity(new Intent(this, RecommendActivity.class));
+                overridePendingTransition(R.animator.zoomin, R.animator.zoomout);
+                break;
             case R.id.exit:
                 finish();
                 System.exit(0);

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <cn.dubby.what.component.CircleNetworkImageView
+            android:id="@+id/image"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginBottom="2dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="2dp"
+            android:src="@drawable/baymax" />
+
+        <TextView
+            android:id="@+id/user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:text="杨正" />
+
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:text="2011-1-1 11:11"
+            android:textSize="10sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/content"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="10dp"
+        android:layout_weight="1"
+        android:text="LinearLayout中有时候想把Widget放在layout的底端，尝试了layout_marginBottom，发现没有任何效果，查找了相关的资料，都没有找到相应的答案。用layout_marginTop太费劲了，最后只能用RelativeLayout来布局了。LinearLayout中有时候想把Widget放在layout的底端，尝试了layout_marginBottom，发现没有任何效果，查找了相关的资料，都没有找到相应的答案。用layout_marginTop太费劲了，最后只能用RelativeLayout来布局了。"
+        android:textSize="15sp" />
+
+</LinearLayout>

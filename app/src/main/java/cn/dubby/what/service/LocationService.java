@@ -24,9 +24,6 @@ import cn.dubby.what.utils.StringUtils;
 
 public class LocationService extends Service implements AMapLocationListener {
 
-
-    private Map parameters = null;
-
     //声明AMapLocationClient类对象
     public AMapLocationClient mLocationClient = null;
     //声明mLocationOption对象
@@ -50,43 +47,30 @@ public class LocationService extends Service implements AMapLocationListener {
             if (amapLocation.getErrorCode() == 0) {
                 //定位成功回调信息，设置相关消息
                 amapLocation.getLocationType();//获取当前定位结果来源，如网络定位结果，详见定位类型表
-                double latitude = amapLocation.getLatitude();//获取纬度
-                double longitude = amapLocation.getLongitude();//获取经度
-                amapLocation.getAccuracy();//获取精度信息
-                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                Date date = new Date(amapLocation.getTime());
-                String dateStr = df.format(date);//定位时间
+//                double latitude = amapLocation.getLatitude();//获取纬度
+//                double longitude = amapLocation.getLongitude();//获取经度
+//                amapLocation.getAccuracy();//获取精度信息
+//                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//                Date date = new Date(amapLocation.getTime());
+//                String dateStr = df.format(date);//定位时间
                 String address = amapLocation.getAddress();//地址，如果option中设置isNeedAddress为false，则没有此结果，网络定位结果中会有地址信息，GPS定位不返回地址信息。
-                String country = amapLocation.getCountry();//国家信息
-                String province = amapLocation.getProvince();//省信息
-                String city = amapLocation.getCity();//城市信息
-                String district = amapLocation.getDistrict();//城区信息
-                String street = amapLocation.getStreet();//街道信息
-                String streetNum = amapLocation.getStreetNum();//街道门牌号信息
-                String cityCode = amapLocation.getCityCode();//城市编码
-                String adCode = amapLocation.getAdCode();//地区编码
+//                String country = amapLocation.getCountry();//国家信息
+//                String province = amapLocation.getProvince();//省信息
+//                String city = amapLocation.getCity();//城市信息
+//                String district = amapLocation.getDistrict();//城区信息
+//                String street = amapLocation.getStreet();//街道信息
+//                String streetNum = amapLocation.getStreetNum();//街道门牌号信息
+//                String cityCode = amapLocation.getCityCode();//城市编码
+//                String adCode = amapLocation.getAdCode();//地区编码
 
                 Log.i("Location", address);
 
-                parameters = new HashMap();
-                parameters.put("latitude", latitude + "");
-                parameters.put("longitude", longitude + "");
-                parameters.put("date", dateStr);
-                parameters.put("address", address);
-                parameters.put("country", country);
-                parameters.put("province", province);
-                parameters.put("city", city);
-                parameters.put("district", district);
-                parameters.put("street", street);
-                parameters.put("streetNum", streetNum);
-                parameters.put("cityCode", cityCode);
-                parameters.put("adCode", adCode);
 
-                MessagesContainer.LOCATION = parameters.toString();
-                Log.i("location", parameters.toString());
-                if (!StringUtils.isEmpty(province) && !StringUtils.isEmpty(city) && !StringUtils.isEmpty(district) &&
-                        !StringUtils.isEmpty(street)) {
-                    SharedPreferencesUtils.setParam(getApplicationContext(), SharedConstant.LOCATION, parameters.toString());
+                MessagesContainer.LOCATION = address;
+                if (!StringUtils.isEmpty(address)) {
+                    SharedPreferencesUtils.setParam(getApplicationContext(), SharedConstant.LOCATION, address.toString());
+                    mLocationClient.stopAssistantLocation();
+                    mLocationClient.stopLocation();
                     stopSelf();
                 }
             } else {

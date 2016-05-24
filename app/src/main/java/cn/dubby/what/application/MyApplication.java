@@ -3,6 +3,7 @@ package cn.dubby.what.application;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.util.DisplayMetrics;
 
 import com.activeandroid.ActiveAndroid;
 import com.android.volley.DefaultRetryPolicy;
@@ -61,5 +62,9 @@ public class MyApplication extends Application {
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         requestQueue.add(request);
+    }
+
+    public static DisplayMetrics getDisplayMetrics() {
+        return context.getResources().getDisplayMetrics();
     }
 }

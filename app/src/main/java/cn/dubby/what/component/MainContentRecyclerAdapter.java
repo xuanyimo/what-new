@@ -34,6 +34,7 @@ public class MainContentRecyclerAdapter extends RecyclerView.Adapter<MainContent
             super(arg0);
         }
 
+        TextView idTv;
         CircleNetworkImageView logo;
         TextView description;
 
@@ -58,7 +59,7 @@ public class MainContentRecyclerAdapter extends RecyclerView.Adapter<MainContent
         ViewHolder viewHolder = new ViewHolder(view);
         viewHolder.logo = (CircleNetworkImageView) view.findViewById(R.id.logo);
         viewHolder.description = (TextView) view.findViewById(R.id.description);
-
+        viewHolder.idTv = (TextView) view.findViewById(R.id.idTv);
 
         return viewHolder;
     }
@@ -70,7 +71,7 @@ public class MainContentRecyclerAdapter extends RecyclerView.Adapter<MainContent
     public void onBindViewHolder(final ViewHolder viewHolder, final int i) {
         viewHolder.logo.setImageUrl(mDatas.get(i).logo, MyApplication.getImageLoader());
         viewHolder.description.setText(mDatas.get(i).description);
-
+        viewHolder.idTv.setText(mDatas.get(i).serverId + "");
         if (onItemClickListener != null) {
             viewHolder.description.setOnClickListener(onItemClickListener);
         }
