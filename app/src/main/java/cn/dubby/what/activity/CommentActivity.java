@@ -32,10 +32,13 @@ import cn.dubby.what.component.FreshListView;
 import cn.dubby.what.component.NoScrollListView;
 import cn.dubby.what.component.dialog.CustomDialog;
 import cn.dubby.what.constant.URLConstant;
+import cn.dubby.what.domain.circle.Post;
 import cn.dubby.what.domain.circle.Theme;
+import cn.dubby.what.domain.user.User;
 import cn.dubby.what.dto.Result;
 import cn.dubby.what.utils.MessagesContainer;
 import cn.dubby.what.utils.StringUtils;
+import cn.dubby.what.utils.TimeFormat;
 import cn.dubby.what.utils.ToastUtils;
 import cn.dubby.what.volleyx.MyRequest;
 
@@ -73,12 +76,12 @@ public class CommentActivity extends AppCompatActivity {
                         try {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-                            Theme theme = new Theme(jsonObject);
+                            Post post = new Post(jsonObject);
                             Map m = new HashMap();
-                            m.put("content", theme.content);
-                            m.put("time", theme.createTime);
-                            m.put("id", theme.serverId);
-                            m.put("createBy", theme.createBy);
+                            m.put("content", post.content);
+                            m.put("time", TimeFormat.format(post.createTime));
+                            m.put("id", post.serverId);
+                            m.put("createBy", post.createBy);
 
                             data.add(m);
                         } catch (JSONException e) {
@@ -88,9 +91,36 @@ public class CommentActivity extends AppCompatActivity {
                     adapter.notifyDataSetChanged();
                     freshListView.onRefreshComplete();
                     //在设置头像和用户名
-                    for (Map them : data) {
-                        long id = Long.parseLong(them.get("id").toString());
+                    for (final Map them : data) {
+                        long id = Long.parseLong(them.get("createBy").toString());
+                        Map parameter4UserInfo = new HashMap();
+                        parameter4UserInfo.put("uid", id + "");
+                        MyRequest request = new MyRequest(URLConstant.USER.INFO, parameter4UserInfo, new Response.Listener<Result>() {
+                            @Override
+                            public void onResponse(Result response) {
+                                if (response.getErrorCode() == 0) {
+                                    JSONObject jsonObject = (JSONObject) response.getData();
+                                    if (jsonObject == null)
+                                        return;
+                                    try {
+                                        User user = new User(jsonObject);
+                                        them.put("image", user.headImg);
+                                        them.put("user_name", user.email);
+                                        Log.i("image", user.headImg);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    adapter.notifyDataSetChanged();
+                                }
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
 
+                            }
+                        });
+
+                        MyApplication.addToRequestQueue(request);
                     }
                 }
             }
@@ -151,6 +181,7 @@ public class CommentActivity extends AppCompatActivity {
                             public void onResponse(Result response) {
                                 if (response.getErrorCode() == 0) {
                                     ToastUtils.showShort(CommentActivity.this, "评论成功");
+                                    reload();
                                 } else {
                                     ToastUtils.showShort(CommentActivity.this, "评论失败");
                                 }

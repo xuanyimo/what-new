@@ -76,7 +76,7 @@ public class FindCircleActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(gridLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         //设置分割线
-        recyclerView.addItemDecoration(new DividerGridItemDecoration(this));
+//        recyclerView.addItemDecoration(new DividerGridItemDecoration(this));
 
         data = new ArrayList<>();
         adapter = new MainContentRecyclerAdapter(this, data);

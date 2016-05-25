@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         //设置分割线
 //        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
-        recyclerView.addItemDecoration(new DividerGridItemDecoration(this));
+//        recyclerView.addItemDecoration(new DividerGridItemDecoration(this));
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refreshLayout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -280,7 +280,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(final int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case REQUEST_CODE_FOR_PICTURE_SELECT:
                 if (resultCode == -1) {
@@ -289,7 +289,7 @@ public class MainActivity extends AppCompatActivity
                     ContentResolver cr = getContentResolver();
                     try {
                         Bitmap bitmap = BitmapFactory.decodeStream(cr.openInputStream(uri));
-                        imageView.setImageBitmap(bitmap);
+//                        imageView.setImageBitmap(bitmap);
 
                         final FormImage image = new FormImage(bitmap);
                         List<FormImage> list = new ArrayList<>();
@@ -298,6 +298,44 @@ public class MainActivity extends AppCompatActivity
                             @Override
                             public void onResponse(Object response) {
                                 if (response != null) {
+                                    try {
+                                        JSONObject jsonObject = new JSONObject(response.toString());
+                                        Result result = new Result(jsonObject);
+
+                                        if (result.getSuccess()) {
+                                            String fileURL = result.getData().toString();
+                                            if (!fileURL.startsWith("http://"))
+                                                fileURL = "http://" + fileURL;
+                                            Log.i("file", fileURL);
+                                            SharedPreferencesUtils.setParam(MyApplication.context, SharedConstant.USER_PICTURE, fileURL);
+                                            MessagesContainer.CURRENT_USER_IMAGE = fileURL;
+                                            imageView.setImageUrl(fileURL, MyApplication.getImageLoader());
+
+                                            //保存用户信息到服务器
+                                            Map map = new HashMap();
+                                            map.put("token", MessagesContainer.TOKEN);
+                                            map.put("headImg", fileURL);
+                                            MyRequest request = new MyRequest(URLConstant.USER.UPDATE, map,
+                                                    new Response.Listener<Result>() {
+                                                        @Override
+                                                        public void onResponse(Result response) {
+                                                            if (response.getErrorCode() == 0) {
+
+                                                            }
+                                                        }
+                                                    },
+                                                    new Response.ErrorListener() {
+                                                        @Override
+                                                        public void onErrorResponse(VolleyError error) {
+
+                                                        }
+                                                    });
+
+                                            MyApplication.getRequestQueue().add(request);
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
                                     //todo 从服务器上获取图片的URL地址,并保存进用户信息
 //                                    String[] rs = response.toString().split("/");
 //                                    String fileUrl = "http://192.168.56.1:8080/pictures/" + rs[rs.length - 1];

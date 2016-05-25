@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#ffffff"
     android:fitsSystemWindows="true"
     tools:context="cn.dubby.what.activity.CommentActivity">
 
@@ -32,7 +33,9 @@
         <cn.dubby.what.component.FreshListView
             android:id="@+id/listView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:divider="#ffffff"
+            android:dividerHeight="5dp" />
     </LinearLayout>
 
 
