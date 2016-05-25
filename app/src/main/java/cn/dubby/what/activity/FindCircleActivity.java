@@ -1,5 +1,6 @@
 package cn.dubby.what.activity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.v4.view.GravityCompat;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -79,6 +81,17 @@ public class FindCircleActivity extends AppCompatActivity {
         data = new ArrayList<>();
         adapter = new MainContentRecyclerAdapter(this, data);
         recyclerView.setAdapter(adapter);
+        adapter.setOnItemClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TextView idTv = (TextView) ((View) (v.getParent())).findViewById(R.id.idTv);
+
+                MessagesContainer.CURRENT_CIRCLE_ID = Long.parseLong(idTv.getText().toString());
+
+                startActivity(new Intent(FindCircleActivity.this, ThemeListActivity.class));
+                overridePendingTransition(R.animator.zoomin, R.animator.zoomout);
+            }
+        });
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override

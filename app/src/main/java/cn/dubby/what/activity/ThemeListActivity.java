@@ -17,8 +17,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import cn.dubby.what.R;
@@ -27,7 +29,9 @@ import cn.dubby.what.component.AdapterWithNetwork;
 import cn.dubby.what.component.FreshListView;
 import cn.dubby.what.component.dialog.CustomDialog;
 import cn.dubby.what.constant.URLConstant;
+import cn.dubby.what.domain.circle.Circle;
 import cn.dubby.what.domain.circle.Theme;
+import cn.dubby.what.domain.user.Focus;
 import cn.dubby.what.dto.Result;
 import cn.dubby.what.utils.MessagesContainer;
 import cn.dubby.what.utils.StringUtils;
@@ -41,12 +45,68 @@ public class ThemeListActivity extends AppCompatActivity {
     private AdapterWithNetwork adapter;
     private Toolbar toolbar;
     private FloatingActionButton fab;
+    private FloatingActionButton focusBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        checkFocused();
+
         initView();
         initData();
+    }
+
+    private void checkFocused() {
+        final List<Long> circleIdList = new ArrayList<>();
+        Map map = new HashMap();
+        map.put("token", MessagesContainer.TOKEN);
+        MyRequest request = new MyRequest(URLConstant.CIRCLE.MY_LIST, map,
+                new Response.Listener<Result>() {
+                    @Override
+                    public void onResponse(Result response) {
+                        if (response.getErrorCode() == 0) {
+                            circleIdList.clear();
+                            try {
+
+                                JSONArray array = new JSONArray(response.getData().toString());
+                                for (int i = 0; i < array.length(); ++i) {
+
+                                    JSONObject jsonObject = array.getJSONObject(i);
+                                    Circle circle = new Circle(jsonObject);
+
+                                    Map map = new HashMap();
+                                    map.put("id", circle.serverId);
+                                    map.put("logo", circle.logo);
+                                    map.put("description", circle.description);
+                                    map.put("focusNum", circle.focusNum);
+                                    map.put("name", circle.name);
+
+                                    circleIdList.add(circle.serverId);
+
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                            //判断是否已经关注
+                            if (!circleIdList.contains(MessagesContainer.CURRENT_CIRCLE_ID)) {
+                                Intent intent = new Intent(ThemeListActivity.this, FocusActivity.class);
+
+                                startActivity(intent);
+                                overridePendingTransition(R.animator.zoomin, R.animator.zoomout);
+                            }
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
+
+        MyApplication.getRequestQueue().add(request);
     }
 
     private void reload() {
@@ -126,6 +186,7 @@ public class ThemeListActivity extends AppCompatActivity {
                 overridePendingTransition(R.animator.zoomin, R.animator.zoomout);
             }
         });
+        focusBtn = (FloatingActionButton) findViewById(R.id.focusBtn);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="cn.dubby.what.activity.ThemeListActivity">
+    tools:context="cn.dubby.what.activity.FocusActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -24,34 +24,30 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:gravity="center"
         android:orientation="vertical"
         android:padding="10dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:layout_scrollFlags="scroll|enterAlways">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <cn.dubby.what.component.FreshListView
-            android:id="@+id/freshListView"
+        <com.android.volley.toolbox.NetworkImageView
+            android:id="@+id/logoImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/logo" />
+
+        <TextView
+            android:id="@+id/description"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"></cn.dubby.what.component.FreshListView>
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/focusBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_background"
+            android:text="关注" />
+
     </LinearLayout>
 
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@android:drawable/ic_input_add" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/focusBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|end"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@android:drawable/ic_input_get"
-        android:visibility="gone" />
-
 </android.support.design.widget.CoordinatorLayout>
-

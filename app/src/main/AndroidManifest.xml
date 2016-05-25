@@ -80,6 +80,10 @@
         <activity
             android:name=".activity.CommentActivity"
             android:label="评论区"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.FocusActivity"
+            android:label="@string/title_activity_focus"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
