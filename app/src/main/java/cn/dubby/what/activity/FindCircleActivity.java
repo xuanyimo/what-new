@@ -10,25 +10,40 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import cn.dubby.what.R;
 import cn.dubby.what.application.MyApplication;
 import cn.dubby.what.component.DividerGridItemDecoration;
 import cn.dubby.what.component.MainContentRecyclerAdapter;
 import cn.dubby.what.constant.SharedConstant;
+import cn.dubby.what.constant.URLConstant;
 import cn.dubby.what.domain.circle.Circle;
+import cn.dubby.what.dto.Result;
+import cn.dubby.what.utils.MessagesContainer;
 import cn.dubby.what.utils.SharedPreferencesUtils;
 import cn.dubby.what.utils.ToastUtils;
+import cn.dubby.what.volleyx.MyRequest;
 
 public class FindCircleActivity extends AppCompatActivity {
 
-    private Button searchBtn;
     private EditText keyEd;
     private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -36,10 +51,11 @@ public class FindCircleActivity extends AppCompatActivity {
     private List<Circle> data;
     private MainContentRecyclerAdapter adapter;
 
+    private boolean isSearching = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
         initView();
         loadData();
@@ -49,7 +65,6 @@ public class FindCircleActivity extends AppCompatActivity {
         setContentView(R.layout.activity_find_circle);
         setTitle("圈子广场");
 
-        searchBtn = (Button) findViewById(R.id.searchBtn);
         keyEd = (EditText) findViewById(R.id.keyEd);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refreshLayout);
@@ -59,96 +74,82 @@ public class FindCircleActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(gridLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         //设置分割线
-//        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
         recyclerView.addItemDecoration(new DividerGridItemDecoration(this));
 
-    }
-
-    private void loadData() {
         data = new ArrayList<>();
-        for (int i = 0; i < 5; ++i) {
-            Circle circle = new Circle();
-            circle.logo = "https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=2102217541,3129842170&fm=58";
-            circle.description = "Java是一个纯粹的面向对象的程序设计语言，它继承了 C++语言面向对象技术的核心。Java舍弃了C语言中容易引起错误的指针（以引用取代）、运算符重载（operator overloading）、多重继承（以接口取代）等特性，增加了垃圾回收器功能用于回收不再被引用的对象所占据的内存空间，使得程序员不用再为内存管理而担忧。在 Java 1.5 版本中，Java 又引入了泛型编程（Generic Programming）、类型安全的枚举、不定长参数和自动装/拆箱等语言特性。";
-            data.add(circle);
-        }
         adapter = new MainContentRecyclerAdapter(this, data);
         recyclerView.setAdapter(adapter);
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                ToastUtils.showShort(FindCircleActivity.this, "refresh...");
-                new AsyncTask<Void, Void, Integer>() {
-                    @Override
-                    protected Integer doInBackground(Void... params) {
-                        int position = data.size();
-                        try {
-                            Thread.sleep(1000 * 2);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        for (int i = 0; i < 1; ++i) {
-                            Circle circle = new Circle();
-                            circle.logo = "https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=2102217541,3129842170&fm=58";
-
-                            String location = (String) SharedPreferencesUtils.getParam(MyApplication.context, SharedConstant.LOCATION, "暂时无法获得位置信息");
-                            circle.description = location;
-                            data.add(circle);
-                        }
-                        return position;
-                    }
-
-                    @Override
-                    protected void onPostExecute(Integer position) {
-                        adapter.notifyItemInserted(position);
-                        swipeRefreshLayout.setRefreshing(false);
-                    }
-                }.execute(null, null, null);
+                loadData();
             }
         });
         swipeRefreshLayout.setColorSchemeColors(Color.GREEN);
 
-        searchBtn.setOnClickListener(new View.OnClickListener() {
+        keyEd.addTextChangedListener(textWatcher);
+    }
+
+    private void loadData() {
+        Map map = new HashMap();
+        map.put("k", keyEd.getText().toString());
+
+        MyRequest request = new MyRequest(URLConstant.CIRCLE.FIND_LIST, map, new Response.Listener<Result>() {
             @Override
-            public void onClick(View v) {
-                swipeRefreshLayout.setRefreshing(true);
-                new AsyncTask<Void, Void, Integer>() {
-                    @Override
-                    protected Integer doInBackground(Void... params) {
-                        int position = data.size();
+            public void onResponse(Result response) {
+                if (response.getErrorCode() == 0) {
+                    data.clear();
+                    JSONArray jsonArray = (JSONArray) response.getData();
+                    for (int i = 0; i < jsonArray.length(); ++i) {
                         try {
-                            Thread.sleep(1000 * 2);
-                        } catch (InterruptedException e) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            Circle circle = new Circle(jsonObject);
+
+                            data.add(circle);
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        for (int i = 0; i < 1; ++i) {
-                            Circle circle = new Circle();
-                            circle.logo = "https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=2102217541,3129842170&fm=58";
-
-                            String location = (String) SharedPreferencesUtils.getParam(MyApplication.context, SharedConstant.LOCATION, "暂时无法获得位置信息");
-                            circle.description = location;
-                            data.add(circle);
-                        }
-                        return position;
                     }
+                    adapter.notifyDataSetChanged();
+                    swipeRefreshLayout.setRefreshing(false);
+                    isSearching = false;
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
 
-                    @Override
-                    protected void onPostExecute(Integer position) {
-                        adapter.notifyItemInserted(position);
-                        swipeRefreshLayout.setRefreshing(false);
-                    }
-                }.execute(null, null, null);
             }
         });
 
+        MyApplication.addToRequestQueue(request);
     }
 
     @Override
     public void onBackPressed() {
         finish();
-        overridePendingTransition(R.animator.zoomin,R.animator.zoomout);
+        overridePendingTransition(R.animator.zoomin, R.animator.zoomout);
     }
 
+
+    private TextWatcher textWatcher = new TextWatcher() {
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            Log.i("textWatcher", "beforeTextChanged");
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            Log.i("textWatcher", "onTextChanged");
+            loadData();
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            Log.i("textWatcher", "afterTextChanged");
+        }
+    };
 
 }
