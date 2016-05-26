@@ -113,7 +113,6 @@ public class Recommend4Coding extends Fragment {
                                         User user = new User(jsonObject);
                                         them.put("image", user.headImg);
                                         them.put("user_name", user.email);
-                                        Log.i("image", user.headImg);
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
