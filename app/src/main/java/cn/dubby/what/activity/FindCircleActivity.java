@@ -143,8 +143,7 @@ public class FindCircleActivity extends AppCompatActivity {
                 break;
             case 2:
                 //取消关注
-                ToastUtils.showShort(FindCircleActivity.this, "点击了取消关注");
-
+                cancelFocusCircle();
                 break;
             case 3:
                 //举报
@@ -167,6 +166,31 @@ public class FindCircleActivity extends AppCompatActivity {
                     public void onResponse(Result response) {
                         if (response.getSuccess()) {
                             ToastUtils.showShort(MyApplication.context, "关注成功");
+//                            finish();
+//                            overridePendingTransition(R.animator.zoomin, R.animator.zoomout);
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
+
+        MyApplication.addToRequestQueue(request);
+    }
+
+    private void cancelFocusCircle() {
+        Map map = new HashMap();
+        map.put("token", MessagesContainer.TOKEN);
+        map.put("cid", MessagesContainer.CURRENT_CIRCLE_ID + "");
+        MyRequest request = new MyRequest(URLConstant.CIRCLE.CANCEL_FOCUS, map,
+                new Response.Listener<Result>() {
+                    @Override
+                    public void onResponse(Result response) {
+                        if (response.getSuccess()) {
+                            ToastUtils.showShort(MyApplication.context, "取消关注成功");
 //                            finish();
 //                            overridePendingTransition(R.animator.zoomin, R.animator.zoomout);
                         }

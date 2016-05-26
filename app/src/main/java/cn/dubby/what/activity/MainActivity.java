@@ -328,7 +328,7 @@ public class MainActivity extends AppCompatActivity
                                             Map map = new HashMap();
                                             map.put("token", MessagesContainer.TOKEN);
                                             map.put("headImg", fileURL);
-                                            MyRequest request = new MyRequest(URLConstant.USER.UPDATE, map,
+                                            MyRequest request1 = new MyRequest(URLConstant.USER.UPDATE, map,
                                                     new Response.Listener<Result>() {
                                                         @Override
                                                         public void onResponse(Result response) {
@@ -346,7 +346,7 @@ public class MainActivity extends AppCompatActivity
                                                         }
                                                     });
 
-                                            MyApplication.getRequestQueue().add(request);
+                                            MyApplication.getRequestQueue().add(request1);
                                         }
                                     } catch (JSONException e) {
                                         e.printStackTrace();

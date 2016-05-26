@@ -41,6 +41,7 @@ public class URLConstant {
         public static String GET = BASE + "circle/get.do";
         public static String FIND_LIST = BASE + "circle/find/list.do";
         public static String MY_LIST = BASE + "circle/my/list.do";
+        public static String CANCEL_FOCUS = BASE + "circle/focus/cancel.do";
     }
 
     //文件上传相关
