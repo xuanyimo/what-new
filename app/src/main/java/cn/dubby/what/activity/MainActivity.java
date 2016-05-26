@@ -50,6 +50,7 @@ import cn.dubby.what.component.CircleNetworkImageView;
 import cn.dubby.what.component.DividerGridItemDecoration;
 import cn.dubby.what.component.DividerItemDecoration;
 import cn.dubby.what.component.MainContentRecyclerAdapter;
+import cn.dubby.what.constant.ErrorCode;
 import cn.dubby.what.constant.SharedConstant;
 import cn.dubby.what.constant.URLConstant;
 import cn.dubby.what.domain.circle.Circle;
@@ -60,6 +61,7 @@ import cn.dubby.what.utils.MessagesContainer;
 import cn.dubby.what.utils.SharedPreferencesUtils;
 import cn.dubby.what.utils.StringUtils;
 import cn.dubby.what.utils.ToastUtils;
+import cn.dubby.what.utils.TokenChecker;
 import cn.dubby.what.volleyx.MyRequest;
 import cn.dubby.what.volleyx.PostUploadRequest;
 
@@ -107,6 +109,10 @@ public class MainActivity extends AppCompatActivity
         MyRequest request = new MyRequest(URLConstant.CIRCLE.MY_LIST, map, new Response.Listener<Result>() {
             @Override
             public void onResponse(Result response) {
+                if (TokenChecker.check(response)) {
+                    ToastUtils.showLong(MyApplication.context, "登陆会话已过期,请重新登陆");
+                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                }
                 if (response.getErrorCode() == 0) {
                     data.clear();
                     JSONArray jsonArray = (JSONArray) response.getData();
@@ -254,8 +260,15 @@ public class MainActivity extends AppCompatActivity
                 overridePendingTransition(R.animator.zoomin, R.animator.zoomout);
                 break;
             case R.id.exit:
-                finish();
-                System.exit(0);
+                MessagesContainer.CURRENT_USER = null;
+                MessagesContainer.TOKEN = null;
+                MessagesContainer.CURRENT_USER_IMAGE = null;
+
+                SharedPreferencesUtils.setParam(MyApplication.context, "token", "");
+                SharedPreferencesUtils.setParam(MyApplication.context, SharedConstant.USER_PICTURE, "");
+                SharedPreferencesUtils.setParam(MyApplication.context, SharedConstant.USER_ID, 0l);
+                SharedPreferencesUtils.setParam(MyApplication.context, SharedConstant.USER, new User());
+                checkLoginStatus();
                 break;
         }
 
@@ -320,14 +333,16 @@ public class MainActivity extends AppCompatActivity
                                                         @Override
                                                         public void onResponse(Result response) {
                                                             if (response.getErrorCode() == 0) {
-
+                                                                ToastUtils.showLong(MyApplication.context, "头像上传成功");
+                                                            } else {
+                                                                ToastUtils.showLong(MyApplication.context, "头像上传失败");
                                                             }
                                                         }
                                                     },
                                                     new Response.ErrorListener() {
                                                         @Override
                                                         public void onErrorResponse(VolleyError error) {
-
+                                                            ToastUtils.showLong(MyApplication.context, "头像上传失败:" + error.getMessage());
                                                         }
                                                     });
 
@@ -336,12 +351,6 @@ public class MainActivity extends AppCompatActivity
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
-                                    //todo 从服务器上获取图片的URL地址,并保存进用户信息
-//                                    String[] rs = response.toString().split("/");
-//                                    String fileUrl = "http://192.168.56.1:8080/pictures/" + rs[rs.length - 1];
-//                                    SharedPreferencesUtils.setParam(getApplicationContext(), SharedConstant.USER_PICTURE, fileUrl);
-//                                    Log.i("volley", fileUrl);
-//                                    imageView.setImageUrl(fileUrl, MyApplication.getImageLoader());
                                 }
 
                             }

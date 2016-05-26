@@ -167,7 +167,7 @@ public class ThemeListActivity extends AppCompatActivity {
                                         User user = new User(jsonObject);
                                         them.put("image", user.headImg);
                                         them.put("user_name", user.email);
-                                        Log.i("image", user.headImg);
+
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
@@ -273,7 +273,7 @@ public class ThemeListActivity extends AppCompatActivity {
                 break;
             case 2:
                 //取消关注
-                ToastUtils.showShort(ThemeListActivity.this, "点击了取消关注");
+                cancelCollectTheme();
                 break;
             case 3:
                 //举报
@@ -298,6 +298,30 @@ public class ThemeListActivity extends AppCompatActivity {
                             ToastUtils.showShort(ThemeListActivity.this, "关注成功");
                         else
                             ToastUtils.showShort(ThemeListActivity.this, "关注失败");
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
+
+        MyApplication.addToRequestQueue(request);
+    }
+
+    private void cancelCollectTheme() {
+        Map map = new HashMap();
+        map.put("tid", MessagesContainer.CURRENT_THEME_ID + "");
+        map.put("token", MessagesContainer.TOKEN);
+        MyRequest request = new MyRequest(URLConstant.THEME.CANCEL_COLLECT, map,
+                new Response.Listener<Result>() {
+                    @Override
+                    public void onResponse(Result response) {
+                        if (response.getSuccess())
+                            ToastUtils.showShort(ThemeListActivity.this, "取消关注成功");
+                        else
+                            ToastUtils.showShort(ThemeListActivity.this, "取消关注失败");
                     }
                 },
                 new Response.ErrorListener() {

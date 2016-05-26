@@ -137,7 +137,6 @@ public class MyCollectionActivity extends AppCompatActivity {
                                         User user = new User(jsonObject);
                                         them.put("image", user.headImg);
                                         them.put("user_name", user.email);
-                                        Log.i("image", user.headImg);
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
@@ -179,7 +178,7 @@ public class MyCollectionActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case 1:
                 //取消关注
-                ToastUtils.showShort(MyCollectionActivity.this, "点击了取消关注");
+                cancelCollectTheme();
                 break;
             case 2:
                 //取消
@@ -194,5 +193,29 @@ public class MyCollectionActivity extends AppCompatActivity {
     public void onBackPressed() {
         finish();
         overridePendingTransition(R.animator.zoomin, R.animator.zoomout);
+    }
+
+    private void cancelCollectTheme() {
+        Map map = new HashMap();
+        map.put("tid", MessagesContainer.CURRENT_THEME_ID + "");
+        map.put("token", MessagesContainer.TOKEN);
+        MyRequest request = new MyRequest(URLConstant.THEME.CANCEL_COLLECT, map,
+                new Response.Listener<Result>() {
+                    @Override
+                    public void onResponse(Result response) {
+                        if (response.getSuccess())
+                            ToastUtils.showShort(MyCollectionActivity.this, "取消关注成功");
+                        else
+                            ToastUtils.showShort(MyCollectionActivity.this, "取消关注失败");
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
+
+        MyApplication.addToRequestQueue(request);
     }
 }

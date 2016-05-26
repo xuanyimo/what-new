@@ -26,6 +26,7 @@ public class URLConstant {
         public static String RECOMMEND_LIST = BASE + "theme/recommend.do";
         public static String COLLECT = BASE + "theme/collect.do";
         public static String COLLECT_LIST = BASE + "theme/list/collection.do";
+        public static String CANCEL_COLLECT = BASE + "theme/collect/cancel.do";
     }
 
     public static class COMMENT {
