@@ -69,7 +69,10 @@
         <service android:name=".service.LocationService" />
 
         <activity android:name=".activity.FindCircleActivity" />
-        <activity android:name=".activity.MyCollectionActivity" />
+        <activity
+            android:name=".activity.MyCollectionActivity"
+            android:label="藏经阁"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.RecommendActivity"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -83,7 +86,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.FocusActivity"
-            android:label="@string/title_activity_focus"
+            android:label="关注"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

@@ -6,8 +6,8 @@ package cn.dubby.what.constant;
 public class URLConstant {
 
     //BASE URL
-//    private static String BASE = "http://115.28.168.116/what/";
-    private static String BASE = "http://172.18.165.5:8080/what/";
+    private static String BASE = "http://115.28.168.116/what/";
+//    private static String BASE = "http://172.18.165.5:8080/what/";
 
     //User相关
     public static class USER {
@@ -24,6 +24,8 @@ public class URLConstant {
         public static String LIST = BASE + "theme/list.do";
         public static String ADD = BASE + "theme/add.do";
         public static String RECOMMEND_LIST = BASE + "theme/recommend.do";
+        public static String COLLECT = BASE + "theme/collect.do";
+        public static String COLLECT_LIST = BASE + "theme/list/collection.do";
     }
 
     public static class COMMENT {

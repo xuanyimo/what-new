@@ -7,6 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 
@@ -221,9 +224,13 @@ public class ThemeListActivity extends AppCompatActivity {
         freshListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                //注册上下文菜单
+                MessagesContainer.CURRENT_THEME_ID = (long) data.get(position - 1).get("id");
                 return false;
             }
         });
+
+        ThemeListActivity.this.registerForContextMenu(freshListView);
 
         focusBtn = (FloatingActionButton) findViewById(R.id.focusBtn);
         fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -245,5 +252,61 @@ public class ThemeListActivity extends AppCompatActivity {
         finish();
         overridePendingTransition(R.animator.zoomin, R.animator.zoomout);
 
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        // set context menu title
+        menu.setHeaderTitle("主题操作");
+        // add context menu item
+        menu.add(0, 1, Menu.NONE, "关注");
+        menu.add(0, 2, Menu.NONE, "取消关注");
+        menu.add(0, 3, Menu.NONE, "举报");
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case 1:
+                //关注
+                collectTheme();
+                break;
+            case 2:
+                //取消关注
+                ToastUtils.showShort(ThemeListActivity.this, "点击了取消关注");
+                break;
+            case 3:
+                //举报
+                ToastUtils.showShort(ThemeListActivity.this, "点击了举报");
+                break;
+            default:
+                return super.onContextItemSelected(item);
+        }
+        return true;
+    }
+
+
+    private void collectTheme() {
+        Map map = new HashMap();
+        map.put("tid", MessagesContainer.CURRENT_THEME_ID + "");
+        map.put("token", MessagesContainer.TOKEN);
+        MyRequest request = new MyRequest(URLConstant.THEME.COLLECT, map,
+                new Response.Listener<Result>() {
+                    @Override
+                    public void onResponse(Result response) {
+                        if (response.getSuccess())
+                            ToastUtils.showShort(ThemeListActivity.this, "关注成功");
+                        else
+                            ToastUtils.showShort(ThemeListActivity.this, "关注失败");
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
+
+        MyApplication.addToRequestQueue(request);
     }
 }

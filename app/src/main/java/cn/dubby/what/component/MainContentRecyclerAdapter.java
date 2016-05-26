@@ -22,6 +22,7 @@ public class MainContentRecyclerAdapter extends RecyclerView.Adapter<MainContent
     private List<Circle> mDatas;
     private LayoutInflater mInflater;
     private View.OnClickListener onItemClickListener;
+    private View.OnLongClickListener onItemLongClickListener;
 
 
     public MainContentRecyclerAdapter(Context context, List<Circle> data) {
@@ -43,6 +44,11 @@ public class MainContentRecyclerAdapter extends RecyclerView.Adapter<MainContent
     public void setOnItemClickListener(View.OnClickListener listener) {
         this.onItemClickListener = listener;
     }
+
+    public void setOnLongClickListener(View.OnLongClickListener listener) {
+        this.onItemLongClickListener = listener;
+    }
+
 
     @Override
     public int getItemCount() {
@@ -74,6 +80,9 @@ public class MainContentRecyclerAdapter extends RecyclerView.Adapter<MainContent
         viewHolder.idTv.setText(mDatas.get(i).serverId + "");
         if (onItemClickListener != null) {
             viewHolder.description.setOnClickListener(onItemClickListener);
+        }
+        if (onItemLongClickListener != null) {
+            viewHolder.description.setOnLongClickListener(onItemLongClickListener);
         }
     }
 

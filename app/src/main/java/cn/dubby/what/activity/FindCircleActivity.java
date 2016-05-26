@@ -14,6 +14,9 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -92,6 +95,23 @@ public class FindCircleActivity extends AppCompatActivity {
                 overridePendingTransition(R.animator.zoomin, R.animator.zoomout);
             }
         });
+        adapter.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                TextView idTv = (TextView) ((View) (v.getParent())).findViewById(R.id.idTv);
+
+                MessagesContainer.CURRENT_CIRCLE_ID = Long.parseLong(idTv.getText().toString());
+                return false;
+            }
+        });
+
+
+        this.registerForContextMenu(recyclerView);
+//        int total = adapter.getItemCount();
+//        for (int i = 0; i < total; ++i) {
+//            this.registerForContextMenu(recyclerView.getChildAt(i));
+//
+//        }
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -103,6 +123,65 @@ public class FindCircleActivity extends AppCompatActivity {
 
         keyEd.addTextChangedListener(textWatcher);
     }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        // set context menu title
+        menu.setHeaderTitle("部落操作");
+        // add context menu item
+        menu.add(0, 1, Menu.NONE, "关注");
+        menu.add(0, 2, Menu.NONE, "取消关注");
+        menu.add(0, 3, Menu.NONE, "举报");
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case 1:
+                //关注
+                focusCircle();
+                break;
+            case 2:
+                //取消关注
+                ToastUtils.showShort(FindCircleActivity.this, "点击了取消关注");
+
+                break;
+            case 3:
+                //举报
+                ToastUtils.showShort(FindCircleActivity.this, "点击了举报");
+
+                break;
+            default:
+                return super.onContextItemSelected(item);
+        }
+        return true;
+    }
+
+    private void focusCircle() {
+        Map map = new HashMap();
+        map.put("token", MessagesContainer.TOKEN);
+        map.put("cid", MessagesContainer.CURRENT_CIRCLE_ID + "");
+        MyRequest request = new MyRequest(URLConstant.CIRCLE.FOCUS, map,
+                new Response.Listener<Result>() {
+                    @Override
+                    public void onResponse(Result response) {
+                        if (response.getSuccess()) {
+                            ToastUtils.showShort(MyApplication.context, "关注成功");
+//                            finish();
+//                            overridePendingTransition(R.animator.zoomin, R.animator.zoomout);
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
+
+        MyApplication.addToRequestQueue(request);
+    }
+
 
     private void loadData() {
         Map map = new HashMap();
