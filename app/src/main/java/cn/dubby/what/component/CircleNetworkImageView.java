@@ -30,7 +30,7 @@ import com.android.volley.toolbox.NetworkImageView;
 /**
  * Created by dubby on 16/5/14.
  */
-public class CircleNetworkImageView extends ImageView {
+public class CircleNetworkImageView extends NetworkImageView {
 
     //=========================以下决定是网络资源=========================
     /**

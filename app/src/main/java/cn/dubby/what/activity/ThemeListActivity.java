@@ -156,7 +156,7 @@ public class ThemeListActivity extends AppCompatActivity {
 
                         Map parameter4UserInfo = new HashMap();
                         parameter4UserInfo.put("uid", id + "");
-                        MyRequest request = new MyRequest(URLConstant.USER.INFO, parameter4UserInfo, new Response.Listener<Result>() {
+                        MyRequest request1 = new MyRequest(URLConstant.USER.INFO, parameter4UserInfo, new Response.Listener<Result>() {
                             @Override
                             public void onResponse(Result response) {
                                 if (response.getErrorCode() == 0) {
@@ -177,18 +177,18 @@ public class ThemeListActivity extends AppCompatActivity {
                         }, new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
-
+                                ToastUtils.showShort(MyApplication.context, error.getMessage());
                             }
                         });
 
-                        MyApplication.addToRequestQueue(request);
+                        MyApplication.addToRequestQueue(request1);
                     }
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                ToastUtils.showShort(MyApplication.context, error.getMessage());
             }
         });
 

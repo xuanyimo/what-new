@@ -215,7 +215,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                                         SharedPreferencesUtils.setParam(getApplicationContext(), SharedConstant.USER_ID, user.serverId);
                                         SharedPreferencesUtils.setParam(getApplicationContext(), SharedConstant.EMAIL, user.email);
-                                        SharedPreferencesUtils.setParam(getApplicationContext(), SharedConstant.USER_PICTURE, user.headImg);
+                                        if (user.headImg != null)
+                                            SharedPreferencesUtils.setParam(getApplicationContext(), SharedConstant.USER_PICTURE, user.headImg);
                                         MessagesContainer.CURRENT_USER = user;
 
                                     }
@@ -331,6 +332,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private void register() {
+        showProgress(true);
         //注册新用户
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
@@ -342,11 +344,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             e.printStackTrace();
         }
 
-        Toast.makeText(getApplicationContext(), "register", Toast.LENGTH_LONG).show();
         MyRequest request = new MyRequest(Request.Method.POST, URLConstant.USER.POST_REGISTER, parameter,
                 new Response.Listener<Result>() {
                     @Override
                     public void onResponse(Result response) {
+
+                        showProgress(false);
                         if (response.getErrorCode() == 0) {
                             ToastUtils.show(getApplicationContext(), "注册成功,请登录", Toast.LENGTH_LONG);
                         } else {
@@ -354,6 +357,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                             mEmailView.setError(response.getMsg());
                             mEmailView.requestFocus();
                         }
+
                     }
                 }
                 ,

@@ -14,6 +14,7 @@ import com.android.volley.toolbox.Volley;
 
 import cn.dubby.what.exception.CrashHandler;
 import cn.dubby.what.service.LocationService;
+import cn.dubby.what.volleyx.cache.ImageCacheUtil;
 import cn.dubby.what.volleyx.cache.LruBitmapCache;
 
 /**
@@ -28,8 +29,12 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        context = getApplicationContext();
+
+
         requestQueue = Volley.newRequestQueue(getApplicationContext());
-        imageLoader = new ImageLoader(requestQueue, new LruBitmapCache());
+//        imageLoader = new ImageLoader(requestQueue, new LruBitmapCache());
+        imageLoader = new ImageLoader(requestQueue, new ImageCacheUtil());
 
         //定位服务没有开启
         startLocationService();
@@ -42,7 +47,7 @@ public class MyApplication extends Application {
         //orm框架ActiveAndroid
         ActiveAndroid.initialize(this);
 
-        context = getApplicationContext();
+
     }
 
     private void startLocationService() {

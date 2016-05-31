@@ -68,7 +68,7 @@ import cn.dubby.what.volleyx.PostUploadRequest;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
-    private static final int REQUEST_CODE_FOR_PICTURE_SELECT = 11111;
+    public static final int REQUEST_CODE_FOR_PICTURE_SELECT = 11111;
     private CircleNetworkImageView imageView;
     private TextView loginNameTv;
     private NavigationView navigationView;
@@ -269,6 +269,10 @@ public class MainActivity extends AppCompatActivity
                 SharedPreferencesUtils.setParam(MyApplication.context, SharedConstant.USER_ID, 0l);
                 SharedPreferencesUtils.setParam(MyApplication.context, SharedConstant.USER, new User());
                 checkLoginStatus();
+                break;
+            case R.id.user_info:
+                startActivity(new Intent(this, UserInfoActivity.class));
+                overridePendingTransition(R.animator.zoomin, R.animator.zoomout);
                 break;
         }
 
